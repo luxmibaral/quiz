@@ -1,0 +1,106 @@
+{% extends 'home/base.html' %}
+{% block title %} Your Blogs {% endblock title %}
+{% block logBlogactive %}active{% endblock %}
+{% block css %} {% load static %}
+<link rel="stylesheet" href="{% static 'css/blogcards.css' %}" />
+<link rel="stylesheet" href="{% static 'css/blogHome.css' %}" />
+<link rel="stylesheet" href="{% static 'css/bubbles.css' %}">
+<style>
+
+  .form-inline-block {
+    display: inline-block;
+    text-align: center;
+  }
+
+  .card-img-overlay {
+    bottom: 26%;
+  }
+
+</style>
+{% endblock css %}
+{% block body %}
+<div class="container-fluid blogMain">
+  {% comment %} <div class="bubbles">
+    <div class="bubble b1"></div>
+    <div class="bubble b2"></div>
+    <div class="bubble b3"></div>
+    <div class="bubble b4"></div>
+    <div class="bubble b5"></div>
+    <div class="bubble b6"></div>
+    <div class="bubble b7"></div>
+  </div> {% endcomment %}
+  <div class="my-4">
+    <h2 class="text-light">Write your own Technical Blog</h2>
+    <p class="text-light">Show your creativity and love</p>
+    <div>
+      <a href="/blog/addBlog/" role="button" class="btn btn-success btn-sm p-2">Add Blog <i
+          class="fas fa-plus-circle"></i></a>
+      <a href="/blog/viewAuthorProfile/" role="button" class="btn btn-primary btn-sm p-2">Show Profile <i
+          class="fas fa-user-circle"></i></a>
+    </div>
+    <div class="my-3">
+      <a href="#userBlog" role="button" class="btn btn-secondary btn-lg p-2">View Blogs <i
+          class="fas fa-sort-down"></i></a>
+    </div>
+  </div>
+</div>
+
+<div class="container my-3" id="userBlog">
+  <h2>Your Blogs</h2>
+  <hr />
+
+  <div class="row">
+    {% for post in allposts %}
+    <div class="card col-lg-3 col-md-5 col-sm-9 p-0 m-4">
+      <a href="/blog/{{post.slug}}" class="text-light">
+        <div class="img-container">
+          <img src="/media/{{post.image}}" class="card-img" alt="..." />
+        </div>
+        <div class="card-img-overlay">
+          <h5 class="card-title">{{post.title}}</h5>
+        </div>
+      </a>
+      <div class="card-footer text-center">
+        <small class="text-muted">{{post.dateUpdate.date}} . {{post.timeRead}} read</small>
+
+        <div class="d-flex justify-content-center my-2">
+          <form action="/blog/EditUserBlog/" method="POST" class="form-inline-block">
+            {% csrf_token %}
+            <input type="hidden" name="edit" value="{{post.slug}}" />
+            <button type="submit" title="Edit" class="btn btn-success btn-sm mx-1">
+              <i class="fas fa-edit"></i>
+            </button>
+          </form>
+          <form action="/blog/deleteUserBlog/" method="POST" class="form-inline-block">
+            {% csrf_token %}
+            <input type="hidden" name="del" value="{{post.slug}}" />
+            <button type="submit" title="Delete" class="btn btn-danger btn-sm mx-1">
+              <i class="fas fa-trash"></i>
+            </button>
+          </form>
+
+          <span class="btn btn-secondary btn-sm mx-1" title="User Status">
+            {% if post.userStatus == "publish" %}
+            <i class="fas fa-lock-open"></i>
+            {% else %}
+            <i class="fas fa-lock"></i>
+            {% endif %}
+          </span>
+          <span class="btn btn-info btn-sm mx-1" title="Approval By admin">
+            {% if post.adminStatus %} <i class="fas fa-thumbs-up"></i>
+            {% else%}<i class="fas fa-thumbs-down"></i>
+            {%endif %}</span>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div>
+      <p style="color: grey">
+        You don't have your any blogs yet! click on 'Add Blog' to add your blogs
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock body %}
